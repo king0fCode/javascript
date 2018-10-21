@@ -2,5 +2,6 @@
     "editor.fontSize": 16,
     "editor.tabSize": 3,
     "editor.wordWrap": "on",
-    "editor.wordWrapColumn": 120
+    "editor.wordWrapColumn": 120,
+    "blankLine.triggerOnSave": true
 }
