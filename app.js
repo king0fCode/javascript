@@ -1,11 +1,12 @@
 const posts = [{
-    title: 'Post one',
-    body: 'This is post one'
-}, {
-    title: 'Post two',
-    body: 'This is a post two'
-}];
-
+        title: 'Post one',
+        body: 'This is post one'
+    },
+    {
+        title: 'Post two',
+        body: 'This is post two'
+    }
+];
 function CreatePost(post) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -20,7 +21,6 @@ function CreatePost(post) {
         }, 2000);
     });
 }
-
 function GetPosts() {
     setTimeout(() => {
         let output = '';
