@@ -1,12 +1,10 @@
 const posts = [{
-        title: 'Post one',
-        body: 'This is post one'
-    },
-    {
-        title: 'Post two',
-        body: 'This is post two'
-    }
-];
+    title: 'Post one',
+    body: 'This is post one'
+}, {
+    title: 'Post two',
+    body: 'This is a post two'
+}];
 
 function CreatePost(post) {
     return new Promise((resolve, reject) => {
