@@ -1,19 +1,23 @@
 function easyHTTP() {
     this.http = new XMLHttpRequest();
 }
+
 // make and http get request
 easyHTTP.prototype.get = function(url, callback) {
-        this.http.open('GET', url, true);
-        this.http.onload = () => {
-            if (this.http.status === 200) {
-                callback(this.http.responseText);
-            } else {
-                callback('Error: ' + this.http.status);
-            }
+    this.http.open('GET', url, true);
+    this.http.onload = () => {
+        if (this.http.status === 200) {
+            callback(this.http.responseText);
+        } else {
+            callback('Error: ' + this.http.status);
         }
-        this.http.send();
     }
-    // make an http post request
+    this.http.send();
+}
+
+
+
+// make an http post request
 easyHTTP.prototype.post = function(url, data, callback) {
         this.http.open('POST', url, true);
         this.http.setRequestHeader('content-type', 'application/json');
