@@ -1,94 +1,157 @@
-const PageState = function() {
-    let currentState = new homeState(this);
+// Storage controller
 
-    this.init = function() {
-        this.change(new homeState);
+//item controller
+const ItemCtrl = (function() {
+    // console.log('Item Controller');
+    const Item = function(id, name, calories) {
+            this.id = id;
+            this.name = name;
+            this.calories = calories;
+        }
+        // Data structure / State
+    const data = {
+            items: [{
+                    id: 0,
+                    name: 'Steak Dinner',
+                    calories: 1200
+                },
+                {
+                    id: 1,
+                    name: 'Cookies',
+                    calories: 400
+                }, {
+                    id: 2,
+                    name: 'Eggs',
+                    calories: 300
+                },
+            ],
+            currentItem: null,
+            totalCalories: 0
+        }
+        // public methods
+    return {
+        getItems: function() {
+            return data.items;
+        },
+        addItem: function(name, calories) {
+            // console.log(name, calories);
+            // Create ID
+
+
+            let ID;
+            if (data.items.length > 0) {
+                ID = data.items[data.items.length - 1].id + 1;
+            } else {
+                ID = 0;
+            }
+
+            // Calories to number
+            calories = parseInt(calories);
+
+            // create new item
+            newItem = new Item(ID, name, calories);
+
+            //Add to items array
+            data.items.push(newItem);
+            return newItem;
+
+        },
+        logData: function() {
+            return data;
+        }
     }
 
-    this.change = function(state) {
-        currentState = state;
+})();
+
+
+
+// UI controller
+const UICtrl = (function() {
+
+    const UISelectors = {
+            itemList: '#item-list',
+            addBtn: '.add-btn',
+            itemNameInput: '#item-name',
+            itemCaloriesInput: '#item-calories'
+        }
+        //public methods
+    return {
+        populateItemList: function(items) {
+            let html = '';
+            items.forEach(function(item) {
+                html += `<li class="collection-item" id="item-${item.id}">
+                <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+                <a href="#" class="edit-item secondary-content"><i class="fa fa-pencil"></i></a>
+            </li>`
+            })
+
+            // Insert List Items
+            document.querySelector(UISelectors.itemList).innerHTML = html;
+        },
+        getSelectors: function() {
+            return UISelectors;
+        },
+        getItemInput: function() {
+            return {
+
+                name: document.querySelector(UISelectors.itemNameInput).value,
+                calories: document.querySelector(UISelectors.itemCaloriesInput).value
+            }
+        }
     }
-}
-
-// home State
-const homeState = function(page) {
-    document.querySelector('#heading').textContent = null;
-    document.querySelector('#content').innerHTML = `<div class="jumbotron">
-  <h1 class="display-4">Hello, world!</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-</div>`;
-
-
-}
-
-// about state
-const aboutState = function(page) {
-    document.querySelector('#heading').textContent = 'About Us';
-    document.querySelector('#heading').textContent = null;
-    document.querySelector('#content').innerHTML = `
-  <p>This is the About Page</p>
-  `;
-}
-
-
-// contact state
-const contactState = function(page) {
-    document.querySelector('#heading').textContent = 'About Us';
-    document.querySelector('#heading').textContent = null;
-    document.querySelector('#content').innerHTML = `
-        <form>
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-  `;
-}
-
-// intantiate pagestate
-const page = new PageState();
-
-// init the first state
-page.init();
-
-// UI vars
-const home = document.getElementById('home'),
-    about = document.getElementById('about'),
-    contact = document.getElementById('contact');
-
-// home
-home.addEventListener('click', (e) => {
-    page.change(new homeState);
-
-    e.preventDefault();
-})
+})();
 
 
 
-// About
-about.addEventListener('click', (e) => {
-    page.change(new aboutState);
-
-    e.preventDefault();
-})
+// App Controller
+const App = (function(ItemCtrl, UICtrl) {
+    // console.log(ItemCtrl.logData());
 
 
-//contact
-contact.addEventListener('click', (e) => {
-    page.change(new contactState);
+    //Load event listeners
+    const loadEventListeners = function() {
+        //get UI Selectors
+        const UISelectors = UICtrl.getSelectors();
 
-    e.preventDefault();
-})
+        //add Item event
+        document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit);
+
+    }
+
+    // Add item Submit
+    const itemAddSubmit = function(e) {
+            // console.log('Add');
+            // get form input from UI Controller
+            const input = UICtrl.getItemInput();
+            // check for name and calories
+            if (input.name !== '' && input.calories !== '') {
+
+                //Add item
+                const newItem = ItemCtrl.addItem(input.name, input.calories);
+                console.log(newItem);
+
+            }
+
+            e.preventDefault();
+        }
+        // public methods
+    return {
+        init: function() {
+            console.log('Initializing App...');
+
+            //fetch item from data structure
+            const items = ItemCtrl.getItems();
+            // console.log(items);
+
+            //populate list with items
+            UICtrl.populateItemList(items);
+
+            // load event listeners
+            loadEventListeners();
+        }
+    }
+
+})(ItemCtrl, UICtrl);
+
+// Initializing App
+App.init();
